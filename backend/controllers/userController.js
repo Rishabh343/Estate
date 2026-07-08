@@ -52,7 +52,7 @@ export const login = async (req, res) => {
         message: "check Email or Password",
       });
     }
-    const token = jwt.sign({ id: user._id, role: user.role }, "secretKey", {
+    const token = jwt.sign({ id: user._id, role: user.role }, "secretkey", {
       expiresIn: "1d",
     });
     res.cookie("token", token, {
@@ -60,6 +60,7 @@ export const login = async (req, res) => {
       secure: false,
       maxAge: 24 * 60 * 60 * 1000,
     });
+    console.log("Generated Token:", token);
     res.status(200).json({
       status: true,
       message: "Login Success",

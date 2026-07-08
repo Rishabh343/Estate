@@ -1,6 +1,20 @@
 import express from "express";
-import { createBooking } from "../controllers/bookingController.js";
+import {
+  approvebooking,
+  createBooking,
+  OwnersDashboardReviewBooking,
+  Pendingbooking,
+  Rejectsbooking,
+} from "../controllers/bookingController.js";
+import { auth } from "../middleware/auth.js";
+import { isBuyer } from "../middleware/isBuyer.js";
+import { isOwner } from "../middleware/isOwner.js";
 const bookingRouter = express.Router();
 
-bookingRouter.post("/", createBooking);
-export {bookingRouter}
+bookingRouter.post("/", auth, isBuyer, createBooking);
+bookingRouter.get("/owner", auth, isOwner, OwnersDashboardReviewBooking);
+bookingRouter.get("/approve/:id", auth, isOwner, approvebooking);
+bookingRouter.get("/reject/:id", auth, isOwner, Rejectsbooking);
+bookingRouter.get("/pending/:id", auth, isOwner, Pendingbooking);
+
+export { bookingRouter };
