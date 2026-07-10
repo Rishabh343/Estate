@@ -2,7 +2,7 @@ import mongoose, { model } from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String },
     role: { type: String, enum: ["admin", "owner", "buyer"] },
     email: { type: String, required: true },
     phone: { type: String, required: true },

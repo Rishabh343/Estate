@@ -5,10 +5,17 @@ import { userRouter } from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
 import { propertiesRouter } from "./routes/propertiesRoutes.js";
 import { bookingRouter } from "./routes/bookingRoutes.js";
+import cors from "cors";
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 connectDb();
 const port = process.env.PORT || 5000;
 app.get("/", (req, res) => {
