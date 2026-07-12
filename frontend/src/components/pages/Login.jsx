@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-
+import axios from "axios";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 export default function Login() {
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
   });
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -13,135 +15,280 @@ export default function Login() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/user/login",
+        formData,
+        {
+          withCredentials: true,
+        },
+      );
+      // alert(response.data.message);
+      console.log(response.data);
+      const role = response.data.role;
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("role", role);
+      console.log(role);
 
-    console.log(formData);
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "owner") {
+        navigate("/owner/dashboard");
+      } else {
+        navigate("/buyer/properties");
+      }
+      setFormData({
+        email: "",
+        password: "",
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-4">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden grid lg:grid-cols-2">
+    <div className="min-h-screen bg-[#eeeae3] flex items-center justify-center px-4 py-6">
+  {/* Main Container */}
 
-        {/* Left Side */}
-        <div className="hidden lg:flex flex-col justify-center bg-gradient-to-br from-blue-900 to-indigo-800 text-white px-10 py-8">
+  <div className="w-full max-w-5xl min-h-[600px] bg-[#faf9f6] rounded-[24px] shadow-2xl shadow-stone-400/20 overflow-hidden grid lg:grid-cols-2">
+    {/* ================= LEFT SIDE ================= */}
 
-          <h1 className="text-4xl font-bold">
-            Estate<span className="text-yellow-400">Hub</span>
+    <div className="hidden lg:flex relative overflow-hidden">
+      {/* Background Image */}
+
+      <img
+        src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400"
+        alt="Luxury property"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* Dark Overlay */}
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
+
+      {/* Content */}
+
+      <div className="relative z-10 flex flex-col justify-between w-full p-8 text-white">
+        {/* Logo */}
+
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Estate
           </h1>
-
-          <p className="mt-4 text-blue-100 leading-7">
-            Welcome back! Sign in to manage your properties, explore listings,
-            approve bookings, and connect with buyers and owners.
-          </p>
-
-          <div className="mt-8 space-y-3">
-            <div className="flex items-center gap-3">
-              <span className="text-yellow-400">✔</span>
-              <span>Verified Property Listings</span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-yellow-400">✔</span>
-              <span>Secure Property Management</span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-yellow-400">✔</span>
-              <span>Fast Booking Approvals</span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-yellow-400">✔</span>
-              <span>Trusted Real Estate Platform</span>
-            </div>
-          </div>
         </div>
 
-        {/* Right Side */}
+        {/* Bottom Content */}
 
-        <div className="p-8 flex flex-col justify-center">
+        <div className="max-w-md">
+          <p className="text-xs uppercase tracking-[0.25em] text-white/70 mb-3">
+            Find your perfect place
+          </p>
 
-          <h2 className="text-3xl font-bold text-slate-800">
-            Welcome Back
+          <h2 className="text-3xl xl:text-4xl font-medium leading-tight">
+            Where exceptional
+            <br />
+            properties meet
+            <br />
+            extraordinary living.
           </h2>
 
-          <p className="text-slate-500 mt-1 mb-6">
-            Login to continue to your dashboard.
+          <p className="mt-5 text-sm text-white/75 leading-6">
+            Discover thoughtfully selected homes and manage your real estate
+            journey from one trusted platform.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Small Features */}
 
-            <div>
-              <label className="block text-sm font-medium mb-2 text-slate-700">
-                Email Address
-              </label>
+          <div className="flex items-center gap-4 mt-6 text-xs text-white/80">
+            <span>Verified Listings</span>
 
-              <input
-                type="email"
-                name="email"
-                placeholder="john@example.com"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-600 outline-none"
-              />
-            </div>
+            <span className="w-1 h-1 rounded-full bg-white/60" />
 
-            <div>
-              <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-slate-700">
-                  Password
-                </label>
+            <span>Trusted Owners</span>
 
-                <button
-                  type="button"
-                  className="text-sm text-blue-700 hover:underline"
-                >
-                  Forgot Password?
-                </button>
-              </div>
+            <span className="w-1 h-1 rounded-full bg-white/60" />
 
-              <input
-                type="password"
-                name="password"
-                placeholder="********"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-600 outline-none"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-
-              <label className="flex items-center gap-2 text-sm text-slate-600">
-                <input
-                  type="checkbox"
-                  className="rounded"
-                />
-                Remember Me
-              </label>
-
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2.5 rounded-lg transition"
-            >
-              Login
-            </button>
-
-          </form>
-
-          <p className="text-center mt-6 text-gray-600">
-            Don't have an account?{" "}
-            <button className="text-blue-700 font-semibold hover:underline">
-              Create Account
-            </button>
-          </p>
-
+            <span>Easy Booking</span>
+          </div>
         </div>
-
       </div>
     </div>
+
+    {/* ================= RIGHT SIDE ================= */}
+
+    <div className="flex items-center justify-center px-6 py-8 sm:px-10 lg:px-12">
+      <div className="w-full max-w-sm">
+        {/* Mobile Logo */}
+
+        <h1 className="lg:hidden text-3xl font-semibold text-stone-900 mb-8">
+          Estate
+        </h1>
+
+        {/* Heading */}
+
+        <div className="mb-7">
+          <p className="text-xs uppercase tracking-[0.25em] text-stone-500 font-medium mb-2">
+            Welcome back
+          </p>
+
+          <h2 className="text-3xl font-semibold tracking-tight text-stone-900">
+            Sign in to Estate
+          </h2>
+
+          <p className="text-sm text-stone-500 mt-2 leading-6">
+            Enter your details to access your account.
+          </p>
+        </div>
+
+        {/* Form */}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Email */}
+
+          <div>
+            <label className="block text-sm font-medium mb-2 text-stone-700">
+              Email address
+            </label>
+
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="
+                w-full
+                bg-transparent
+                border border-stone-300
+                rounded-xl
+                px-4 py-3
+                text-stone-900
+                placeholder:text-stone-400
+                outline-none
+                focus:border-stone-900
+                focus:ring-1
+                focus:ring-stone-900
+                transition
+              "
+            />
+          </div>
+
+          {/* Password */}
+
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className="text-sm font-medium text-stone-700">
+                Password
+              </label>
+
+              <button
+                type="button"
+                className="text-sm text-stone-600 hover:text-stone-900 transition"
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="
+                w-full
+                bg-transparent
+                border border-stone-300
+                rounded-xl
+                px-4 py-3
+                text-stone-900
+                placeholder:text-stone-400
+                outline-none
+                focus:border-stone-900
+                focus:ring-1
+                focus:ring-stone-900
+                transition
+              "
+            />
+          </div>
+
+          {/* Remember */}
+
+          <label className="flex items-center gap-2 text-sm text-stone-600 cursor-pointer w-fit">
+            <input
+              type="checkbox"
+              className="w-4 h-4 accent-stone-900"
+            />
+
+            Remember me
+          </label>
+
+          {/* Login Button */}
+
+          <button
+            type="submit"
+            className="
+              w-full
+              bg-stone-900
+              hover:bg-stone-800
+              text-white
+              font-medium
+              py-3
+              rounded-xl
+              transition-all
+              duration-300
+              hover:shadow-lg
+              hover:shadow-stone-900/10
+            "
+          >
+            Login
+          </button>
+        </form>
+
+        {/* Divider */}
+
+        <div className="flex items-center gap-4 my-6">
+          <div className="h-px flex-1 bg-stone-200" />
+
+          <span className="text-[11px] uppercase tracking-widest text-stone-400">
+            New to Estate?
+          </span>
+
+          <div className="h-px flex-1 bg-stone-200" />
+        </div>
+
+        {/* Signup */}
+
+        <Link
+          to="/signup"
+          className="
+            w-full
+            border border-stone-300
+            text-stone-800
+            font-medium
+            py-3
+            rounded-xl
+            transition
+            hover:bg-stone-100
+            flex items-center
+            justify-center
+          "
+        >
+          Create an account
+        </Link>
+
+        {/* Footer */}
+
+        <p className="text-center text-xs text-stone-400 mt-7">
+          By continuing, you agree to Estate's terms and privacy policy.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
   );
 }

@@ -13,6 +13,7 @@ import {
 import { auth } from "../middleware/auth.js";
 import { isOwner } from "../middleware/isOwner.js";
 import upload from "../middleware/uploads.js";
+import { isAdmin } from "../middleware/isAdmin.js";
 const propertiesRouter = express.Router();
 
 propertiesRouter.post(
@@ -25,10 +26,10 @@ propertiesRouter.post(
 propertiesRouter.get("/", getAllProperties);
 propertiesRouter.get("/search", searchProperties);
 propertiesRouter.get("/filter", filterProperties);
-propertiesRouter.get("/approveProperty/:id", auth, isOwner, approveProperty);
-propertiesRouter.get("/rejectProperty/:id", auth, isOwner, RejectProperty);
+propertiesRouter.put("/approveProperty/:id", auth, isAdmin, approveProperty);
+propertiesRouter.put("/rejectProperty/:id", auth, isAdmin, RejectProperty);
 propertiesRouter.get("/:id", getPropertyById);
-propertiesRouter.delete("/:id", auth, isOwner, deleteProperty);
+propertiesRouter.delete("/:id", auth, deleteProperty);
 propertiesRouter.put(
   "/:id",
   auth,

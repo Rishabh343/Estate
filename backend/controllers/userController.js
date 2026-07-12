@@ -76,3 +76,124 @@ export const login = async (req, res) => {
     });
   }
 };
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await userModel.find();
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      data: users,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id).select("-password");
+
+    res.status(200).json({
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, phone, email, address } = req.body;
+
+    const updatedData = {
+      name,
+      phone,
+      email,
+      address,
+    };
+
+    if (req.file) {
+      updatedData.profileImage = `http://localhost:8000/uploads/${req.file.filename}`;
+    }
+
+    const updatedUser = await userModel
+      .findByIdAndUpdate(req.user.id, updatedData, { new: true })
+      .select("-password");
+
+    res.status(200).json({
+      status: true,
+      message: "Profile updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+export const deleteProfile = async (req, res) => {
+  try {
+    const user = await userModel.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        message: "user not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "user deleted Successfully",
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+export const searchUser = async (req, res) => {
+  try {
+    const { name } = req.query;
+
+    const user = await userModel.find({
+      name: {
+        $regex: name,
+        $options: "i",
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      count: user.length,
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const filterUser = async (req, res) => {
+  try {
+    const { role } = req.query;
+
+    const user = await userModel.find({
+      role: {
+        $regex: role,
+        $options: "i",
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      count: user.length,
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

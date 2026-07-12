@@ -1,15 +1,17 @@
+import axios from "axios";
 import React, { useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
     phone: "",
     role: "buyer",
     password: "",
     confirmPassword: "",
   });
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -17,7 +19,7 @@ export default function Signup() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
@@ -25,128 +27,358 @@ export default function Signup() {
       return;
     }
 
-    console.log(formData);
+    try {
+      // Remove confirmPassword before sending data
+      const { confirmPassword, ...userData } = formData;
+
+      const response = await axios.post(
+        "http://localhost:8000/api/user/register",
+        userData,
+        {
+          withCredentials: true,
+        },
+      );
+
+      alert(response.data.message);
+      console.log(response.data);
+      navigate("/login");
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        role: "buyer",
+        password: "",
+        confirmPassword: "",
+      });
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Something went wrong. Please try again.",
+      );
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-4">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden grid lg:grid-cols-2">
-        {/* Left Side */}
-        <div className="hidden lg:flex flex-col justify-center bg-gradient-to-br from-blue-900 to-indigo-800 text-white px-10 py-8">
-          <h1 className="text-4xl font-bold">
-            Estate<span className="text-yellow-400">Hub</span>
-          </h1>
+   <div className="min-h-screen bg-[#eeeae3] flex items-center justify-center px-4 py-6">
+  {/* Main Container */}
 
-          <p className="mt-4 text-blue-100 leading-7">
-            Find your dream home, list your property, connect with buyers, and
-            manage everything from one secure platform.
+  <div className="w-full max-w-5xl min-h-[600px] bg-[#faf9f6] rounded-[24px] shadow-2xl shadow-stone-400/20 overflow-hidden grid lg:grid-cols-2">
+    {/* ================= LEFT SIDE ================= */}
+
+    <div className="hidden lg:flex relative overflow-hidden">
+      {/* Background Image */}
+
+      <img
+        src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1400"
+        alt="Luxury property"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* Dark Overlay */}
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
+
+      {/* Content */}
+
+      <div className="relative z-10 flex flex-col justify-between w-full p-8 text-white">
+        {/* Logo */}
+
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Estate
+        </h1>
+
+        {/* Bottom Content */}
+
+        <div className="max-w-md">
+          <p className="text-xs uppercase tracking-[0.25em] text-white/70 mb-3">
+            Your journey starts here
           </p>
 
-          <div className="mt-8 space-y-3">
-            <div className="flex items-center gap-3">
-              <span className="text-yellow-400">✔</span>
-              <span>Verified Property Listings</span>
-            </div>
+          <h2 className="text-3xl xl:text-4xl font-medium leading-tight">
+            Find a place
+            <br />
+            that feels like
+            <br />
+            home.
+          </h2>
 
-            <div className="flex items-center gap-3">
-              <span className="text-yellow-400">✔</span>
-              <span>Easy Property Booking</span>
-            </div>
+          <p className="mt-5 text-sm text-white/75 leading-6">
+            Create your account to discover exceptional properties, connect
+            with trusted owners, and manage your real estate journey.
+          </p>
 
-            <div className="flex items-center gap-3">
-              <span className="text-yellow-400">✔</span>
-              <span>Trusted Buyers & Owners</span>
-            </div>
+          {/* Features */}
 
-            <div className="flex items-center gap-3">
-              <span className="text-yellow-400">✔</span>
-              <span>Fast & Secure Platform</span>
-            </div>
+          <div className="flex items-center gap-4 mt-6 text-xs text-white/80">
+            <span>Verified Listings</span>
+
+            <span className="w-1 h-1 rounded-full bg-white/60" />
+
+            <span>Trusted Owners</span>
+
+            <span className="w-1 h-1 rounded-full bg-white/60" />
+
+            <span>Easy Booking</span>
           </div>
         </div>
+      </div>
+    </div>
 
-        {/* Right Side */}
+    {/* ================= RIGHT SIDE ================= */}
 
-        <div className="p-8">
-          <h2 className="text-3xl font-bold text-slate-800">Create Account</h2>
+    <div className="flex items-center justify-center px-6 py-8 sm:px-10 lg:px-12">
+      <div className="w-full max-w-md">
+        {/* Mobile Logo */}
 
-          <p className="text-slate-500 mt-1 mb-6">Join EstateHub today.</p>
+        <h1 className="lg:hidden text-3xl font-semibold text-stone-900 mb-8">
+          Estate
+        </h1>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Heading */}
+
+        <div className="mb-6">
+          <p className="text-xs uppercase tracking-[0.25em] text-stone-500 font-medium mb-2">
+            Join Estate
+          </p>
+
+          <h2 className="text-3xl font-semibold tracking-tight text-stone-900">
+            Create your account
+          </h2>
+
+          <p className="text-sm text-stone-500 mt-2">
+            Start your real estate journey today.
+          </p>
+        </div>
+
+        {/* Form */}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Full Name */}
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5 text-stone-700">
+              Full name
+            </label>
+
             <input
               type="text"
-              name="fullName"
-              placeholder="Full Name"
-              value={formData.fullName}
+              name="name"
+              placeholder="Enter your full name"
+              value={formData.name}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-600 outline-none"
+              required
+              className="
+                w-full
+                bg-transparent
+                border border-stone-300
+                rounded-xl
+                px-4 py-2.5
+                text-stone-900
+                placeholder:text-stone-400
+                outline-none
+                focus:border-stone-900
+                focus:ring-1
+                focus:ring-stone-900
+                transition
+              "
             />
+          </div>
+
+          {/* Email */}
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5 text-stone-700">
+              Email address
+            </label>
 
             <input
               type="email"
               name="email"
-              placeholder="Email Address"
+              placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-600 outline-none"
+              required
+              className="
+                w-full
+                bg-transparent
+                border border-stone-300
+                rounded-xl
+                px-4 py-2.5
+                text-stone-900
+                placeholder:text-stone-400
+                outline-none
+                focus:border-stone-900
+                focus:ring-1
+                focus:ring-stone-900
+                transition
+              "
             />
+          </div>
 
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone Number"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-600 outline-none"
-            />
+          {/* Phone and Role */}
 
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-600 outline-none"
-            >
-              <option value="buyer">Buyer</option>
-              <option value="owner">Property Owner</option>
-              <option value="agent">Admin</option>
-            </select>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-stone-700">
+                Phone number
+              </label>
 
-            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="phone"
+                placeholder="Phone number"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                className="
+                  w-full
+                  bg-transparent
+                  border border-stone-300
+                  rounded-xl
+                  px-4 py-2.5
+                  text-stone-900
+                  placeholder:text-stone-400
+                  outline-none
+                  focus:border-stone-900
+                  focus:ring-1
+                  focus:ring-stone-900
+                  transition
+                "
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-stone-700">
+                Account type
+              </label>
+
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="
+                  w-full
+                  bg-transparent
+                  border border-stone-300
+                  rounded-xl
+                  px-4 py-2.5
+                  text-stone-900
+                  outline-none
+                  focus:border-stone-900
+                  focus:ring-1
+                  focus:ring-stone-900
+                  transition
+                "
+              >
+                <option value="buyer">Buyer</option>
+                <option value="owner">Property Owner</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Passwords */}
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-stone-700">
+                Password
+              </label>
+
               <input
                 type="password"
                 name="password"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-600 outline-none"
+                required
+                className="
+                  w-full
+                  bg-transparent
+                  border border-stone-300
+                  rounded-xl
+                  px-4 py-2.5
+                  text-stone-900
+                  placeholder:text-stone-400
+                  outline-none
+                  focus:border-stone-900
+                  focus:ring-1
+                  focus:ring-stone-900
+                  transition
+                "
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-stone-700">
+                Confirm password
+              </label>
 
               <input
                 type="password"
                 name="confirmPassword"
-                placeholder="Confirm Password"
+                placeholder="Confirm password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-600 outline-none"
+                required
+                className="
+                  w-full
+                  bg-transparent
+                  border border-stone-300
+                  rounded-xl
+                  px-4 py-2.5
+                  text-stone-900
+                  placeholder:text-stone-400
+                  outline-none
+                  focus:border-stone-900
+                  focus:ring-1
+                  focus:ring-stone-900
+                  transition
+                "
               />
             </div>
+          </div>
 
-            <button
-              type="submit"
-              className="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2.5 rounded-lg transition"
-            >
-              Create Account
-            </button>
-          </form>
+          {/* Submit */}
 
-          <p className="text-center mt-5 text-gray-600">
-            Already have an account?{" "}
-            <button className="text-blue-700 font-semibold hover:underline">
-              Login
-            </button>
-          </p>
-        </div>
+          <button
+            type="submit"
+            className="
+              w-full
+              bg-stone-900
+              hover:bg-stone-800
+              text-white
+              font-medium
+              py-3
+              rounded-xl
+              transition-all
+              duration-300
+              hover:shadow-lg
+              hover:shadow-stone-900/10
+              mt-2
+            "
+          >
+            Create Account
+          </button>
+        </form>
+
+        {/* Login */}
+
+        <p className="text-center mt-6 text-sm text-stone-500">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-stone-900 font-semibold hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
+  </div>
+</div>
   );
 }

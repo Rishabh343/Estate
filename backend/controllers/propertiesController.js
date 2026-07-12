@@ -282,12 +282,7 @@ export const approveProperty = async (req, res) => {
     }
 
     // Ensure the logged-in owner owns this booking
-    if (property.owner.toString() !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
+   
 
     property.status = "Approved";
 
@@ -315,15 +310,6 @@ export const RejectProperty = async (req, res) => {
         message: "Property not found",
       });
     }
-
-    // Ensure the logged-in owner owns this booking
-    if (property.owner.toString() !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
-
     property.status = "Rejected";
 
     await property.save();

@@ -24,6 +24,7 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRouter);
 app.use("/api/properties", propertiesRouter);
 app.use("/api/booking", bookingRouter);
+app.use("/uploads", express.static("uploads"));
 app.listen(port, () => {
   console.log("server is running ");
 });

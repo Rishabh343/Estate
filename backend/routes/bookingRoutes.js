@@ -13,8 +13,8 @@ const bookingRouter = express.Router();
 
 bookingRouter.post("/", auth, isBuyer, createBooking);
 bookingRouter.get("/owner", auth, isOwner, OwnersDashboardReviewBooking);
-bookingRouter.get("/approve/:id", auth, isOwner, approvebooking);
-bookingRouter.get("/reject/:id", auth, isOwner, Rejectsbooking);
+bookingRouter.put("/approve/:id", auth, isOwner, approvebooking);
+bookingRouter.put("/reject/:id", auth, isOwner, Rejectsbooking);
 bookingRouter.get("/pending/:id", auth, isOwner, Pendingbooking);
 
 export { bookingRouter };
