@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Signup from "./components/pages/Signup";
 import Login from "./components/pages/Login";
-import MainLayout from "./components/layout/mainlayout";
 
 import DashboardAdmin from "./components/pages/Admin/DashboardAdmin";
 import UsersAdmin from "./components/pages/Admin/UsersAdmin";
@@ -20,6 +19,7 @@ import MyBookings from "./components/pages/Buyer/MyBookings";
 import MyProfile from "./components/pages/Buyer/MyProfile";
 import Properties from "./components/pages/Buyer/Properties";
 import ProtectedRoute from "./components/common/ProtectedRoutes";
+import MainLayout from "./components/layout/MainLayout";
 
 export default function App() {
   return (
