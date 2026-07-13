@@ -5,16 +5,18 @@ import App from "./App.jsx";
 import UserProvider from "./components/context/userContext.jsx";
 import PropertyProvider from "./components/context/PropertyContext.jsx";
 import BookingProvider from "./components/context/BookingContext.jsx";
-
+import FavoriteProvider from "./components/context/FavoriteContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <UserProvider>
-      <PropertyProvider>
-        <BookingProvider>
-          <App />
-        </BookingProvider>
-      </PropertyProvider>
+      <FavoriteProvider>
+        <PropertyProvider>
+          <BookingProvider>
+            <App />
+          </BookingProvider>
+        </PropertyProvider>
+      </FavoriteProvider>
     </UserProvider>
   </StrictMode>,
 );

@@ -2,6 +2,8 @@ import express from "express";
 import {
   approvebooking,
   createBooking,
+  deleteBooking,
+  myBookings,
   OwnersDashboardReviewBooking,
   Pendingbooking,
   Rejectsbooking,
@@ -13,6 +15,8 @@ const bookingRouter = express.Router();
 
 bookingRouter.post("/", auth, isBuyer, createBooking);
 bookingRouter.get("/owner", auth, isOwner, OwnersDashboardReviewBooking);
+bookingRouter.get("/my", auth, isBuyer, myBookings);
+bookingRouter.delete("/:id", auth, isBuyer, deleteBooking);
 bookingRouter.put("/approve/:id", auth, isOwner, approvebooking);
 bookingRouter.put("/reject/:id", auth, isOwner, Rejectsbooking);
 bookingRouter.get("/pending/:id", auth, isOwner, Pendingbooking);

@@ -24,6 +24,57 @@ export const createBooking = async (req, res) => {
     });
   }
 };
+export const myBookings = async (req, res) => {
+  try {
+    const bookings = await bookingModel
+      .find({ buyer: req.user.id })
+      .populate("property")
+      .populate("owner", "name email phone")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      status: true,
+      message: "Bookings fetched successfully",
+      data: bookings,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Failed to fetch bookings",
+      error: error.message,
+    });
+  }
+};
+// Delete  Booking
+export const deleteBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const booking = await bookingModel.findOneAndDelete({
+      _id: id,
+      buyer: req.user.id,
+    });
+
+    if (!booking) {
+      return res.status(404).json({
+        status: false,
+        message: "Booking not found or you are not authorized",
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Booking deleted successfully",
+      data: booking,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Failed to delete booking",
+      error: error.message,
+    });
+  }
+};
 export const OwnersDashboardReviewBooking = async (req, res) => {
   try {
     const bookings = await bookingModel
@@ -121,14 +172,6 @@ export const Pendingbooking = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Booking not found",
-      });
-    }
-
-    // Ensure the logged-in owner owns this booking
-    if (booking.owner.toString() !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        message: "Unauthorized",
       });
     }
 

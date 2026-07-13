@@ -1,7 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import api from "../../services/api";
 
-
 export const BookingContext = createContext();
 
 export default function BookingProvider({ children }) {
@@ -37,7 +36,21 @@ export default function BookingProvider({ children }) {
       setLoading(false);
     }
   };
+  // Delete Booking
+  const deleteBooking = async (id) => {
+    try {
+      const response = await api.delete(`/booking/${id}`);
 
+      // Remove deleted booking from UI immediately
+      setBookings((prev) => prev.filter((booking) => booking._id !== id));
+
+      return response.data;
+    } catch (error) {
+      console.log("Delete Booking Error:", error);
+
+      throw error;
+    }
+  };
   // Owner - Property Bookings
   const ownerBookings = async () => {
     try {
@@ -87,19 +100,6 @@ export default function BookingProvider({ children }) {
     }
   };
 
-  // Cancel Booking (Buyer)
-  //   const cancelBooking = async (bookingId) => {
-  //     try {
-  //       await api.delete(`/booking/${bookingId}`);
-
-  //       setBookings((prev) =>
-  //         prev.filter((booking) => booking._id !== bookingId)
-  //       );
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   };
-
   return (
     <BookingContext.Provider
       value={{
@@ -110,7 +110,7 @@ export default function BookingProvider({ children }) {
         ownerBookings,
         approveBooking,
         rejectBooking,
-        // cancelBooking,
+        deleteBooking,
       }}
     >
       {children}

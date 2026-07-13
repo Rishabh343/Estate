@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import { propertiesRouter } from "./routes/propertiesRoutes.js";
 import { bookingRouter } from "./routes/bookingRoutes.js";
 import cors from "cors";
+import favoriteRouter from "./routes/favoriteRoute.js";
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRouter);
 app.use("/api/properties", propertiesRouter);
 app.use("/api/booking", bookingRouter);
+app.use("/api/favorite", favoriteRouter);
 app.use("/uploads", express.static("uploads"));
 app.listen(port, () => {
   console.log("server is running ");
