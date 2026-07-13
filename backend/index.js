@@ -12,7 +12,7 @@ const app = express();
 connectDb();
 app.use(
   cors({
-    origin: "https://estate-liart-kappa.vercel.app/buyer/properties",
+    origin: ["http://localhost:5173", "https://estate-management.vercel.app"],
     credentials: true,
   }),
 );
