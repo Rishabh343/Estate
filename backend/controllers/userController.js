@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
+dotenv.config();
 export const Register = async (req, res) => {
   try {
     const { name, email, phone, role, password } = req.body;
@@ -126,9 +128,13 @@ export const login = async (req, res) => {
         message: "check Email or Password",
       });
     }
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      },
+    );
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
