@@ -15,7 +15,8 @@ export const addProperties = async (req, res) => {
     } = req.body;
     const imageUrls = req.files
       ? req.files.map(
-          (file) => `http://localhost:8000/uploads/${file.filename}`,
+          (file) =>
+            `https://estate-backend-1xrm.onrender.com/uploads/${file.filename}`,
         )
       : [];
     const response = await propertiesModel.create({
@@ -64,7 +65,26 @@ export const getAllProperties = async (req, res) => {
     });
   }
 };
+export const getApprovedProperties = async (req, res) => {
+  try {
+    const properties = await propertiesModel
+      .find({ status: "Approved" })
+      .populate("owner", "name email phone")
+      .sort({ createdAt: -1 });
 
+    res.status(200).json({
+      status: true,
+      message: "Approved properties fetched successfully",
+      data: properties,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Failed to load properties",
+      error: error.message,
+    });
+  }
+};
 // Get Property By Id
 export const getPropertyById = async (req, res) => {
   try {
@@ -107,7 +127,8 @@ export const updateProperty = async (req, res) => {
     } = req.body;
     const imageUrls = req.files
       ? req.files.map(
-          (file) => `http://localhost:8000/uploads/${file.filename}`,
+          (file) =>
+            `https://estate-backend-1xrm.onrender.com/uploads/${file.filename}`,
         )
       : [];
     const response = await propertiesModel.findOneAndUpdate(
@@ -282,7 +303,6 @@ export const approveProperty = async (req, res) => {
     }
 
     // Ensure the logged-in owner owns this booking
-   
 
     property.status = "Approved";
 

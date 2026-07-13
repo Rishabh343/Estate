@@ -9,15 +9,16 @@ import cors from "cors";
 import favoriteRouter from "./routes/favoriteRoute.js";
 dotenv.config();
 const app = express();
-app.use(express.json());
-app.use(cookieParser());
+connectDb();
 app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
   }),
 );
-connectDb();
+app.use(express.json());
+app.use(cookieParser());
+
 const port = process.env.PORT || 5000;
 app.get("/", (req, res) => {
   res.send("Comming from backend");

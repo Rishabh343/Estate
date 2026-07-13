@@ -1,10 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Heart, MapPin } from "lucide-react";
 import { FavoriteContext } from "../../context/FavoriteContext";
 import { BookingContext } from "../../context/BookingContext";
 import { PropertyContext } from "../../context/PropertyContext";
 import Modal from "../../common/Modal";
-
 
 export default function Properties() {
   const [search, setSearch] = useState("");
@@ -13,6 +12,7 @@ export default function Properties() {
 
   const {
     properties,
+    getAllAppovedProperties,
     searchProperty,
     filterProperty,
     resetProperties,
@@ -20,13 +20,8 @@ export default function Properties() {
 
   const { createBooking } = useContext(BookingContext);
 
-  const {
-    favorites,
-    addFavorite,
-    removeFavorite,
-  } = useContext(FavoriteContext);
-
-
+  const { favorites, addFavorite, removeFavorite } =
+    useContext(FavoriteContext);
 
   const isFavorite = (propertyId) => {
     return favorites.some(
@@ -44,32 +39,19 @@ export default function Properties() {
         await addFavorite(propertyId);
       }
     } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Failed to update favorite",
-      );
+      alert(error.response?.data?.message || "Failed to update favorite");
     }
   };
-
-  
 
   const handleBooking = async (propertyId) => {
     try {
       const response = await createBooking(propertyId);
 
-      alert(
-        response.message ||
-          "Booking Created Successfully",
-      );
+      alert(response.message || "Booking Created Successfully");
     } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Booking Failed",
-      );
+      alert(error.response?.data?.message || "Booking Failed");
     }
   };
-
-  
 
   const handleViewDetails = (property) => {
     setSelectedProperty(property);
@@ -80,7 +62,9 @@ export default function Properties() {
     setIsViewModalOpen(false);
     setSelectedProperty(null);
   };
-
+  useEffect(() => {
+    getAllAppovedProperties();
+  }, []);
   return (
     <div className="min-h-screen bg-[#f5f3ef] p-4 md:p-6 lg:p-8">
       {/* Heading */}
@@ -95,8 +79,8 @@ export default function Properties() {
         </h1>
 
         <p className="mt-2 text-sm text-stone-500">
-          Browse thoughtfully selected homes, apartments and
-          villas across India.
+          Browse thoughtfully selected homes, apartments and villas across
+          India.
         </p>
       </div>
 
@@ -122,9 +106,7 @@ export default function Properties() {
         />
 
         <select
-          onChange={(e) =>
-            filterProperty("", e.target.value)
-          }
+          onChange={(e) => filterProperty("", e.target.value)}
           className="rounded-xl bg-stone-50 px-4 py-2.5 text-sm outline-none"
         >
           <option value="">All Types</option>
@@ -135,17 +117,13 @@ export default function Properties() {
         </select>
 
         <select
-          onChange={(e) =>
-            filterProperty(e.target.value, "")
-          }
+          onChange={(e) => filterProperty(e.target.value, "")}
           className="rounded-xl bg-stone-50 px-4 py-2.5 text-sm outline-none"
         >
           <option value="">All Cities</option>
           <option value="Delhi">Delhi</option>
           <option value="Noida">Noida</option>
-          <option value="Chandigarh">
-            Chandigarh
-          </option>
+          <option value="Chandigarh">Chandigarh</option>
           <option value="Mumbai">Mumbai</option>
         </select>
       </div>
@@ -172,17 +150,13 @@ export default function Properties() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    handleFavorite(property._id)
-                  }
+                  onClick={() => handleFavorite(property._id)}
                   className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm"
                 >
                   <Heart
                     size={18}
                     className={
-                      favorite
-                        ? "fill-red-500 text-red-500"
-                        : "text-stone-600"
+                      favorite ? "fill-red-500 text-red-500" : "text-stone-600"
                     }
                   />
                 </button>
@@ -201,10 +175,7 @@ export default function Properties() {
                   </h2>
 
                   <span className="shrink-0 text-base font-semibold">
-                    ₹
-                    {Number(
-                      property.price,
-                    ).toLocaleString("en-IN")}
+                    ₹{Number(property.price).toLocaleString("en-IN")}
                   </span>
                 </div>
 
@@ -213,14 +184,12 @@ export default function Properties() {
 
                   <span>
                     {property.city}
-                    {property.state &&
-                      `, ${property.state}`}
+                    {property.state && `, ${property.state}`}
                   </span>
                 </div>
 
                 <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-5 text-stone-500">
-                  {property.description ||
-                    property.desciption}
+                  {property.description || property.desciption}
                 </p>
 
                 <div className="my-4 h-px bg-stone-100" />
@@ -230,9 +199,7 @@ export default function Properties() {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      handleViewDetails(property)
-                    }
+                    onClick={() => handleViewDetails(property)}
                     className="flex-1 rounded-xl bg-stone-900 px-3 py-2.5 text-sm font-medium text-white transition hover:bg-black"
                   >
                     View Details
@@ -242,9 +209,7 @@ export default function Properties() {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      handleBooking(property._id)
-                    }
+                    onClick={() => handleBooking(property._id)}
                     className="flex-1 rounded-xl border border-stone-300 px-3 py-2.5 text-sm font-medium text-stone-800 transition hover:bg-stone-900 hover:text-white"
                   >
                     Book Visit
@@ -260,17 +225,13 @@ export default function Properties() {
 
       {properties.length === 0 && (
         <div className="py-24 text-center">
-          <h2 className="text-xl font-semibold">
-            No Properties Found
-          </h2>
+          <h2 className="text-xl font-semibold">No Properties Found</h2>
 
           <p className="mt-2 text-sm text-stone-500">
             Try searching or changing the filters.
           </p>
         </div>
       )}
-
-     
 
       <Modal
         isOpen={isViewModalOpen}
@@ -301,10 +262,7 @@ export default function Properties() {
               </div>
 
               <p className="font-semibold text-stone-900">
-                ₹
-                {Number(
-                  selectedProperty.price,
-                ).toLocaleString("en-IN")}
+                ₹{Number(selectedProperty.price).toLocaleString("en-IN")}
               </p>
             </div>
 
@@ -315,8 +273,7 @@ export default function Properties() {
 
               <span>
                 {selectedProperty.city}
-                {selectedProperty.state &&
-                  `, ${selectedProperty.state}`}
+                {selectedProperty.state && `, ${selectedProperty.state}`}
               </span>
             </div>
 
@@ -343,8 +300,7 @@ export default function Properties() {
                 </p>
 
                 <p className="mt-1 font-medium text-stone-800">
-                  {selectedProperty.owner?.name ||
-                    "Owner"}
+                  {selectedProperty.owner?.name || "Owner"}
                 </p>
 
                 {selectedProperty.owner?.email && (

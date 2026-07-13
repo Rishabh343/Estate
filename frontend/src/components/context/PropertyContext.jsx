@@ -22,7 +22,19 @@ export default function PropertyProvider({ children }) {
       setLoading(false);
     }
   };
+  const getAllAppovedProperties = async () => {
+    try {
+      setLoading(true);
 
+      const response = await api.get("/properties/appovedproperties");
+
+      setProperties(response.data.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   // Add Property
 
   const addProperty = async (formData) => {
@@ -143,6 +155,7 @@ export default function PropertyProvider({ children }) {
         properties,
         loading,
         getProperties,
+        getAllAppovedProperties,
         addProperty,
         updateProperty,
         deleteProperty,
