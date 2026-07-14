@@ -68,6 +68,27 @@ export const getAllProperties = async (req, res) => {
     });
   }
 };
+export const getMyProperties = async (req, res) => {
+  try {
+    const properties = await propertiesModel
+      .find({
+        owner: req.user.id,
+      })
+      .populate("owner", "name email phone");
+
+    return res.status(200).json({
+      status: true,
+      message: "Owner properties fetched successfully",
+      data: properties,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Failed to fetch your properties",
+      error: error.message,
+    });
+  }
+};
 export const getApprovedProperties = async (req, res) => {
   try {
     const properties = await propertiesModel

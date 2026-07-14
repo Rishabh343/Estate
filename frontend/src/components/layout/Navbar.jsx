@@ -13,6 +13,9 @@ import {
   LogOut,
   LogIn,
 } from "lucide-react";
+import { FavoriteContext } from "../context/FavoriteContext";
+import { useContext } from "react";
+import api from "../../services/api";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -21,10 +24,8 @@ export default function Navbar() {
 
   const role = localStorage.getItem("role");
 
-  const isLoggedIn =
-    localStorage.getItem("isLoggedIn") === "true";
-
-  // ================= ADMIN MENU =================
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const { clearFavorites } = useContext(FavoriteContext);
 
   const adminMenu = [
     {
@@ -54,8 +55,6 @@ export default function Navbar() {
     },
   ];
 
-  // ================= OWNER MENU =================
-
   const ownerMenu = [
     {
       title: "Dashboard",
@@ -78,8 +77,6 @@ export default function Navbar() {
       icon: <User size={18} />,
     },
   ];
-
-  // ================= BUYER LOGGED-IN MENU =================
 
   const buyerMenu = [
     {
@@ -104,8 +101,6 @@ export default function Navbar() {
     },
   ];
 
-  // ================= GUEST MENU =================
-
   const guestMenu = [
     {
       title: "Properties",
@@ -113,8 +108,6 @@ export default function Navbar() {
       icon: <Building2 size={18} />,
     },
   ];
-
-  // ================= ROLE BASED MENU =================
 
   let menu = guestMenu;
 
@@ -127,8 +120,6 @@ export default function Navbar() {
       menu = buyerMenu;
     }
   }
-
-  // ================= HOME PATH =================
 
   const getHomePath = () => {
     if (!isLoggedIn) {
@@ -146,17 +137,19 @@ export default function Navbar() {
     return "/buyer/properties";
   };
 
-  // ================= LOGOUT =================
+  const logoutHandler = async () => {
+    try {
+      await api.post("/user/logout");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      clearFavorites();
 
-  const logoutHandler = () => {
-    localStorage.removeItem("role");
-    localStorage.removeItem("token");
-    localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("role");
+      localStorage.removeItem("isLoggedIn");
 
-    setMobileMenuOpen(false);
-
-    // Stay on public property page after logout
-    navigate("/buyer/properties");
+      navigate("/buyer/properties");
+    }
   };
 
   return (
@@ -166,10 +159,7 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
 
-        <NavLink
-          to={getHomePath()}
-          className="flex items-center gap-2"
-        >
+        <NavLink to={getHomePath()} className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-900 text-white">
             <Building2 size={19} />
           </div>
@@ -269,9 +259,7 @@ export default function Navbar() {
 
         <button
           type="button"
-          onClick={() =>
-            setMobileMenuOpen((prev) => !prev)
-          }
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
           className="
             flex
             h-10
@@ -286,11 +274,7 @@ export default function Navbar() {
           "
           aria-label="Toggle navigation menu"
         >
-          {mobileMenuOpen ? (
-            <X size={23} />
-          ) : (
-            <Menu size={23} />
-          )}
+          {mobileMenuOpen ? <X size={23} /> : <Menu size={23} />}
         </button>
       </div>
 
@@ -316,9 +300,7 @@ export default function Navbar() {
             <NavLink
               key={item.path}
               to={item.path}
-              onClick={() =>
-                setMobileMenuOpen(false)
-              }
+              onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
                 `
                   flex
@@ -374,9 +356,7 @@ export default function Navbar() {
           ) : (
             <NavLink
               to="/login"
-              onClick={() =>
-                setMobileMenuOpen(false)
-              }
+              onClick={() => setMobileMenuOpen(false)}
               className="
                 flex
                 w-full

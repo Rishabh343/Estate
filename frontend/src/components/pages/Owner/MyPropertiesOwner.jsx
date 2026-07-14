@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Eye, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload } from "lucide-react";
 import { PropertyContext } from "../../context/PropertyContext";
 import Loader from "../../common/Loader";
 import Modal from "../../common/Modal";
-
 
 const initialFormData = {
   title: "",
@@ -21,7 +20,7 @@ export default function MyPropertiesOwner() {
   const {
     properties,
     loading,
-    getProperties,
+    getMyProperties,
     addProperty,
     updateProperty,
     deleteProperty,
@@ -37,7 +36,7 @@ export default function MyPropertiesOwner() {
 
   // Get properties
   useEffect(() => {
-    getProperties();
+    getMyProperties();
   }, []);
 
   // Open Add Property Modal
@@ -257,7 +256,7 @@ export default function MyPropertiesOwner() {
                         className="p-2 rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition"
                         title="View Property"
                       >
-                        <Eye size={18} />
+                        {/* <Eye size={18} /> */}
                       </button>
 
                       <button

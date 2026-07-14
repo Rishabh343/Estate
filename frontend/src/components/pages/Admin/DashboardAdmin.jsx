@@ -8,7 +8,7 @@ import { BookingContext } from "../../context/BookingContext";
 export default function DashboardAdmin() {
   // User Context
 
-  const { user, loading: userLoading, getAllProfile } = useContext(UserContext);
+  const { users, loading: userLoading, getAllProfile } = useContext(UserContext);
 
   // Property Context
 
@@ -37,7 +37,7 @@ export default function DashboardAdmin() {
 
   // Safe Arrays
 
-  const userList = Array.isArray(user) ? user : [];
+  const userList = Array.isArray(users) ? users : [];
 
   const propertyList = Array.isArray(properties) ? properties : [];
 

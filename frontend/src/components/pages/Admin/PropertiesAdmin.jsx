@@ -280,7 +280,7 @@ export default function PropertiesAdmin() {
           />
 
           <h2 className="text-xl font-semibold text-stone-800 mt-4">
-            No Properties Found
+            No Properties Found 
           </h2>
 
           <p className="text-stone-500 mt-2">
@@ -291,9 +291,7 @@ export default function PropertiesAdmin() {
         </div>
       )}
 
-      {/* =========================
-          View Property Modal
-      ========================= */}
+   
 
       {selectedProperty && (
         <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
@@ -316,7 +314,7 @@ export default function PropertiesAdmin() {
                 </div>
               )}
 
-              {/* Close Button */}
+          
 
               <button
                 onClick={() =>
@@ -328,7 +326,7 @@ export default function PropertiesAdmin() {
               </button>
             </div>
 
-            {/* Property Details */}
+         
 
             <div className="p-6 md:p-8">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -349,7 +347,7 @@ export default function PropertiesAdmin() {
                   </div>
                 </div>
 
-                {/* Status */}
+                
 
                 <span
                   className={`w-fit px-3 py-1.5 rounded-full text-sm font-medium capitalize
@@ -368,7 +366,7 @@ export default function PropertiesAdmin() {
                 </span>
               </div>
 
-              {/* Details Grid */}
+            
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                 <div className="bg-stone-50 rounded-xl p-4">
@@ -418,7 +416,7 @@ export default function PropertiesAdmin() {
                 </div>
               </div>
 
-              {/* Owner */}
+             
 
               <div className="mt-8">
                 <h3 className="text-lg font-semibold text-stone-900">
@@ -446,7 +444,7 @@ export default function PropertiesAdmin() {
                 </div>
               </div>
 
-              {/* Description */}
+           
 
               <div className="mt-8">
                 <h3 className="text-lg font-semibold text-stone-900">
@@ -460,7 +458,6 @@ export default function PropertiesAdmin() {
                 </p>
               </div>
 
-              {/* Multiple Images */}
 
               {selectedProperty.images?.length >
                 1 && (
@@ -484,7 +481,7 @@ export default function PropertiesAdmin() {
                 </div>
               )}
 
-              {/* Close */}
+            
 
               <button
                 onClick={() =>

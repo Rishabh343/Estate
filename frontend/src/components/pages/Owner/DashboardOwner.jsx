@@ -10,7 +10,7 @@ export default function DashboardOwner() {
   const {
     properties,
     loading: propertyLoading,
-    getProperties,
+    getMyProperties,
   } = useContext(PropertyContext);
 
   // Booking Context
@@ -22,7 +22,7 @@ export default function DashboardOwner() {
 
   // Fetch data when dashboard loads
   useEffect(() => {
-    getProperties();
+    getMyProperties();
     ownerBookings();
   }, []);
 

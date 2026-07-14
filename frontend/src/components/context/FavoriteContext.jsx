@@ -7,8 +7,20 @@ export default function FavoriteProvider({ children }) {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const addFavorite = async (propertyId) => {
+    try {
+      const response = await api.post(`/favorite/${propertyId}`);
 
+      // Add new favorite to UI immediately
+      setFavorites((prev) => [response.data.data, ...prev]);
 
+      return response.data;
+    } catch (error) {
+      console.log("Add Favorite Error:", error.response?.data || error.message);
+
+      throw error;
+    }
+  };
   const getFavorites = async () => {
     try {
       setLoading(true);
@@ -30,44 +42,15 @@ export default function FavoriteProvider({ children }) {
     }
   };
 
-
-
-  const addFavorite = async (propertyId) => {
-    try {
-      const response = await api.post(
-        `/favorite/${propertyId}`,
-      );
-
-      // Add new favorite to UI immediately
-      setFavorites((prev) => [
-        response.data.data,
-        ...prev,
-      ]);
-
-      return response.data;
-    } catch (error) {
-      console.log(
-        "Add Favorite Error:",
-        error.response?.data || error.message,
-      );
-
-      throw error;
-    }
-  };
-
-
   const removeFavorite = async (propertyId) => {
     try {
-      const response = await api.delete(
-        `/favorite/${propertyId}`,
-      );
+      const response = await api.delete(`/favorite/${propertyId}`);
 
       // Remove favorite from UI
       setFavorites((prev) =>
         prev.filter(
           (item) =>
-            item.property?._id !== propertyId &&
-            item.property !== propertyId,
+            item.property?._id !== propertyId && item.property !== propertyId,
         ),
       );
 
@@ -82,25 +65,15 @@ export default function FavoriteProvider({ children }) {
     }
   };
 
-  // =========================
-  // Check If Property Is Favorite
-  // =========================
-
   const isFavorite = (propertyId) => {
     return favorites.some(
       (item) =>
-        item.property?._id === propertyId ||
-        item.property === propertyId,
+        item.property?._id === propertyId || item.property === propertyId,
     );
   };
 
-  // =========================
-  // Load Favorites
-  // =========================
-
   useEffect(() => {
-    const isLoggedIn =
-      localStorage.getItem("isLoggedIn") === "true";
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
     const role = localStorage.getItem("role");
 
@@ -109,7 +82,9 @@ export default function FavoriteProvider({ children }) {
       getFavorites();
     }
   }, []);
-
+  const clearFavorites = () => {
+    setFavorites([]);
+  };
   return (
     <FavoriteContext.Provider
       value={{
@@ -122,6 +97,7 @@ export default function FavoriteProvider({ children }) {
         addFavorite,
         removeFavorite,
         isFavorite,
+        clearFavorites,
       }}
     >
       {children}

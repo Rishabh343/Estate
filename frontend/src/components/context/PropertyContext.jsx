@@ -22,6 +22,28 @@ export default function PropertyProvider({ children }) {
       setLoading(false);
     }
   };
+  const getMyProperties = async () => {
+  try {
+    setLoading(true);
+
+    const response = await api.get(
+      "/properties/myproperties",
+    );
+
+    setProperties(response.data.data);
+
+    return response.data;
+  } catch (error) {
+    console.log(
+      "Get My Properties Error:",
+      error.response?.data || error.message,
+    );
+
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
   const getAllAppovedProperties = async () => {
     try {
       setLoading(true);
@@ -149,6 +171,7 @@ export default function PropertyProvider({ children }) {
         properties,
         loading,
         getProperties,
+        getMyProperties,
         getAllAppovedProperties,
         addProperty,
         updateProperty,

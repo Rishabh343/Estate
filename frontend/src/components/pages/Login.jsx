@@ -3,6 +3,9 @@ import axios from "axios";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import Loader from "../common/Loader";
 import { useEffect } from "react";
+import { useContext } from "react";
+import { FavoriteContext } from "../context/FavoriteContext";
+import ForgotPassword from "./ForgotPassword";
 export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
@@ -10,7 +13,9 @@ export default function Login() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const navigate = useNavigate();
+  const { getFavorites } = useContext(FavoriteContext);
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -25,8 +30,8 @@ export default function Login() {
       setError("");
 
       const response = await axios.post(
-        "https://estate-backend-1xrm.onrender.com/api/user/login",
-        // "http://localhost:8000/api/user/login",
+        // "https://estate-backend-1xrm.onrender.com/api/user/login",
+        "http://localhost:8000/api/user/login",
         formData,
         {
           withCredentials: true,
@@ -44,6 +49,7 @@ export default function Login() {
       } else if (role === "owner") {
         navigate("/owner/dashboard");
       } else {
+        await getFavorites();
         navigate("/buyer/properties");
       }
       setFormData({
@@ -203,6 +209,7 @@ export default function Login() {
 
                   <button
                     type="button"
+                    onClick={() => setForgotPasswordOpen(true)}
                     className="text-sm text-stone-600 hover:text-stone-900 transition"
                   >
                     Forgot password?
@@ -347,6 +354,10 @@ export default function Login() {
           </div>
         </div>
       )}
+      <ForgotPassword
+        isOpen={forgotPasswordOpen}
+        onClose={() => setForgotPasswordOpen(false)}
+      />
     </div>
   );
 }

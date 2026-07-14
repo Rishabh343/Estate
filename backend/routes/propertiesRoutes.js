@@ -6,6 +6,7 @@ import {
   filterProperties,
   getAllProperties,
   getApprovedProperties,
+  getMyProperties,
   getPropertyById,
   RejectProperty,
   searchProperties,
@@ -33,6 +34,12 @@ propertiesRouter.get(
   auth,
   isBuyer,
   getApprovedProperties,
+);
+propertiesRouter.get(
+  "/myproperties",
+  auth,
+  isOwner,
+  getMyProperties,
 );
 propertiesRouter.put("/approveProperty/:id", auth, isAdmin, approveProperty);
 propertiesRouter.put("/rejectProperty/:id", auth, isAdmin, RejectProperty);

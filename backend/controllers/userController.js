@@ -157,6 +157,18 @@ export const login = async (req, res) => {
     });
   }
 };
+export const logout = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+
+  return res.status(200).json({
+    status: true,
+    message: "Logout successful",
+  });
+};
 export const getAllUsers = async (req, res) => {
   try {
     const users = await userModel.find();
@@ -279,6 +291,67 @@ export const filterUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: error.message,
+    });
+  }
+};
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email, newPassword, confirmPassword } = req.body;
+
+    // Check required fields
+    if (!email || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        status: false,
+        message: "All fields are required",
+      });
+    }
+
+    // Check passwords match
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        status: false,
+        message: "Passwords do not match",
+      });
+    }
+
+    // Password validation
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        status: false,
+        message: "Password must be at least 6 characters",
+      });
+    }
+
+    // Find registered user
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "No account found with this email",
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      10,
+    );
+
+    // Update password
+    user.password = hashedPassword;
+
+    await user.save();
+
+    return res.status(200).json({
+      status: true,
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Failed to update password",
+      error: error.message,
     });
   }
 };
