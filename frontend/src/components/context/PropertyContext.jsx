@@ -39,11 +39,7 @@ export default function PropertyProvider({ children }) {
 
   const addProperty = async (formData) => {
     try {
-      const response = await api.post("/properties", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await api.post("/properties", formData);
 
       setProperties((prev) => [response.data.data, ...prev]);
 
@@ -57,11 +53,7 @@ export default function PropertyProvider({ children }) {
 
   const updateProperty = async (id, formData) => {
     try {
-      const response = await api.put(`/properties/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await api.put(`/properties/${id}`, formData);
 
       setProperties((prev) =>
         prev.map((item) => (item._id === id ? response.data.data : item)),
@@ -69,7 +61,9 @@ export default function PropertyProvider({ children }) {
 
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.log("STATUS:", error.response?.status);
+      console.log("BACKEND ERROR:", error.response?.data);
+      console.log("MESSAGE:", error.message);
     }
   };
 
