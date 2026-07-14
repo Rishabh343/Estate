@@ -23,5 +23,14 @@ const bookingSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+bookingSchema.index(
+  {
+    buyer: 1,
+    property: 1,
+  },
+  {
+    unique: true,
+  },
+);
 const bookingModel = mongoose.model("bookingSchema", bookingSchema);
 export default bookingModel;

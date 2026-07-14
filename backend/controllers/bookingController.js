@@ -3,8 +3,47 @@ import propertiesModel from "../models/propertiesModel.js";
 
 export const createBooking = async (req, res) => {
   try {
-    const { propertyId, buyerId, visitDate, vistTime } = req.body;
-    const property = await propertiesModel.findById(propertyId);
+    const {
+      propertyId,
+      visitDate,
+      vistTime,
+    } = req.body;
+
+    // Check property ID
+    if (!propertyId) {
+      return res.status(400).json({
+        success: false,
+        message: "Property ID is required",
+      });
+    }
+
+    // Find property
+    const property =
+      await propertiesModel.findById(propertyId);
+
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
+
+    // Check if buyer already booked this property
+    const existingBooking =
+      await bookingModel.findOne({
+        property: propertyId,
+        buyer: req.user.id,
+      });
+
+    if (existingBooking) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "You have already booked a visit for this property",
+      });
+    }
+
+    // Create booking
     const booking = await bookingModel.create({
       property: propertyId,
       buyer: req.user.id,
@@ -12,15 +51,18 @@ export const createBooking = async (req, res) => {
       visitDate,
       vistTime,
     });
-    res.status(201).json({
+
+    return res.status(201).json({
       success: true,
-      message: "Property visit booked successfully",
+      message:
+        "Property visit booked successfully",
       data: booking,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to create booking",
+      error: error.message,
     });
   }
 };

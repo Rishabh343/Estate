@@ -1,20 +1,31 @@
-import React, { useContext, useState } from "react";
+import React, {
+  useContext,
+  useState,
+} from "react";
+
 import {
   Search,
   Trash2,
   Eye,
   Building2,
-  X,
   MapPin,
 } from "lucide-react";
+
 import { PropertyContext } from "../../context/PropertyContext";
 import Loader from "../../common/Loader";
-
-
+import Modal from "../../common/Modal";
 
 export default function PropertiesAdmin() {
   const [search, setSearch] = useState("");
-  const [selectedProperty, setSelectedProperty] = useState(null);
+
+  const [selectedProperty, setSelectedProperty] =
+    useState(null);
+
+  const [isViewModalOpen, setIsViewModalOpen] =
+    useState(false);
+
+  const [activeImage, setActiveImage] =
+    useState(0);
 
   const {
     properties,
@@ -24,9 +35,7 @@ export default function PropertiesAdmin() {
     deleteProperty,
   } = useContext(PropertyContext);
 
-  
-  // Search
- 
+  // ================= SEARCH =================
 
   const handleSearch = (e) => {
     const value = e.target.value;
@@ -40,13 +49,30 @@ export default function PropertiesAdmin() {
     }
   };
 
- 
-  // Delete Property
- 
+  // ================= VIEW PROPERTY =================
+
+  const handleViewDetails = (property) => {
+    setSelectedProperty(property);
+
+    // Always start from first image
+    setActiveImage(0);
+
+    setIsViewModalOpen(true);
+  };
+
+  // ================= CLOSE MODAL =================
+
+  const handleCloseModal = () => {
+    setIsViewModalOpen(false);
+    setSelectedProperty(null);
+    setActiveImage(0);
+  };
+
+  // ================= DELETE PROPERTY =================
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this property?"
+      "Are you sure you want to delete this property?",
     );
 
     if (!confirmDelete) return;
@@ -58,22 +84,18 @@ export default function PropertiesAdmin() {
     } catch (error) {
       alert(
         error.response?.data?.message ||
-          "Failed to delete property."
+          "Failed to delete property.",
       );
     }
   };
 
-  
-  // Safe Property List
- 
+  // ================= SAFE PROPERTY LIST =================
 
   const propertyList = Array.isArray(properties)
     ? properties
     : [];
 
- 
-  // Loader
-
+  // ================= LOADER =================
 
   if (loading && propertyList.length === 0) {
     return <Loader />;
@@ -81,24 +103,24 @@ export default function PropertiesAdmin() {
 
   return (
     <div className="min-h-screen bg-stone-100 p-4 md:p-6 lg:p-8">
-      {/* Header */}
+      {/* ================= HEADER ================= */}
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-stone-900">
           Properties
         </h1>
 
-        <p className="text-stone-500 mt-1">
+        <p className="mt-1 text-stone-500">
           Manage all listed properties.
         </p>
       </div>
 
-      {/* Search */}
+      {/* ================= SEARCH ================= */}
 
-      <div className="bg-white border border-stone-200 rounded-2xl shadow-sm p-4 mb-6 flex items-center gap-3">
+      <div className="mb-6 flex items-center gap-3 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
         <Search
           size={20}
-          className="text-stone-400 shrink-0"
+          className="shrink-0 text-stone-400"
         />
 
         <input
@@ -106,14 +128,14 @@ export default function PropertiesAdmin() {
           placeholder="Search by property name, city..."
           value={search}
           onChange={handleSearch}
-          className="w-full outline-none bg-transparent text-stone-800 placeholder:text-stone-400"
+          className="w-full bg-transparent text-stone-800 outline-none placeholder:text-stone-400"
         />
       </div>
 
-      {/* Table */}
+      {/* ================= TABLE ================= */}
 
       {propertyList.length > 0 ? (
-        <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-x-auto">
+        <div className="overflow-x-auto rounded-2xl border border-stone-200 bg-white shadow-sm">
           <table className="w-full min-w-[900px]">
             {/* Table Header */}
 
@@ -151,7 +173,7 @@ export default function PropertiesAdmin() {
               {propertyList.map((item) => (
                 <tr
                   key={item._id}
-                  className="border-b border-stone-100 hover:bg-stone-50 transition"
+                  className="border-b border-stone-100 transition hover:bg-stone-50"
                 >
                   {/* Property */}
 
@@ -161,10 +183,10 @@ export default function PropertiesAdmin() {
                         <img
                           src={item.images[0]}
                           alt={item.title}
-                          className="w-14 h-14 rounded-xl object-cover shrink-0"
+                          className="h-14 w-14 shrink-0 rounded-xl object-cover"
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-xl bg-stone-100 flex items-center justify-center shrink-0">
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-stone-100">
                           <Building2
                             size={22}
                             className="text-stone-400"
@@ -174,10 +196,11 @@ export default function PropertiesAdmin() {
 
                       <div>
                         <p className="font-semibold text-stone-900">
-                          {item.title || "Untitled Property"}
+                          {item.title ||
+                            "Untitled Property"}
                         </p>
 
-                        <p className="text-xs text-stone-500 mt-1 capitalize">
+                        <p className="mt-1 text-xs capitalize text-stone-500">
                           {item.propertyType ||
                             "Property"}
                         </p>
@@ -195,7 +218,7 @@ export default function PropertiesAdmin() {
                       </p>
 
                       {item.owner?.email && (
-                        <p className="text-xs text-stone-500 mt-1">
+                        <p className="mt-1 text-xs text-stone-500">
                           {item.owner.email}
                         </p>
                       )}
@@ -205,7 +228,8 @@ export default function PropertiesAdmin() {
                   {/* City */}
 
                   <td className="p-4 text-stone-600">
-                    {item.city || "Not available"}
+                    {item.city ||
+                      "Not available"}
                   </td>
 
                   {/* Price */}
@@ -213,7 +237,7 @@ export default function PropertiesAdmin() {
                   <td className="p-4 font-medium text-stone-800">
                     ₹
                     {Number(
-                      item.price || 0
+                      item.price || 0,
                     ).toLocaleString("en-IN")}
                   </td>
 
@@ -221,16 +245,24 @@ export default function PropertiesAdmin() {
 
                   <td className="p-4">
                     <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-medium capitalize
-                      ${
-                        item.status?.toLowerCase() ===
-                        "approved"
-                          ? "bg-green-100 text-green-700"
-                          : item.status?.toLowerCase() ===
-                              "rejected"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-amber-100 text-amber-700"
-                      }`}
+                      className={`
+                        inline-block
+                        rounded-full
+                        px-3
+                        py-1
+                        text-xs
+                        font-medium
+                        capitalize
+                        ${
+                          item.status?.toLowerCase() ===
+                          "approved"
+                            ? "bg-green-100 text-green-700"
+                            : item.status?.toLowerCase() ===
+                                "rejected"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-amber-100 text-amber-700"
+                        }
+                      `}
                     >
                       {item.status || "Pending"}
                     </span>
@@ -243,10 +275,11 @@ export default function PropertiesAdmin() {
                       {/* View */}
 
                       <button
+                        type="button"
                         onClick={() =>
-                          setSelectedProperty(item)
+                          handleViewDetails(item)
                         }
-                        className="p-2 rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition"
+                        className="rounded-lg bg-stone-100 p-2 text-stone-700 transition hover:bg-stone-200"
                         title="View Property"
                       >
                         <Eye size={18} />
@@ -255,10 +288,11 @@ export default function PropertiesAdmin() {
                       {/* Delete */}
 
                       <button
+                        type="button"
                         onClick={() =>
                           handleDelete(item._id)
                         }
-                        className="p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition"
+                        className="rounded-lg bg-red-100 p-2 text-red-700 transition hover:bg-red-200"
                         title="Delete Property"
                       >
                         <Trash2 size={18} />
@@ -271,19 +305,19 @@ export default function PropertiesAdmin() {
           </table>
         </div>
       ) : (
-        /* Empty State */
+        /* ================= EMPTY STATE ================= */
 
-        <div className="bg-white border border-stone-200 rounded-2xl py-20 text-center">
+        <div className="rounded-2xl border border-stone-200 bg-white py-20 text-center">
           <Building2
             size={48}
             className="mx-auto text-stone-300"
           />
 
-          <h2 className="text-xl font-semibold text-stone-800 mt-4">
-            No Properties Found 
+          <h2 className="mt-4 text-xl font-semibold text-stone-800">
+            No Properties Found
           </h2>
 
-          <p className="text-stone-500 mt-2">
+          <p className="mt-2 text-stone-500">
             {search
               ? `No results found for "${search}".`
               : "There are currently no properties."}
@@ -291,210 +325,101 @@ export default function PropertiesAdmin() {
         </div>
       )}
 
-   
+      {/* ================= VIEW PROPERTY MODAL ================= */}
 
-      {selectedProperty && (
-        <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-xl">
-            {/* Property Image */}
-
-            <div className="relative">
-              {selectedProperty.images?.[0] ? (
-                <img
-                  src={selectedProperty.images[0]}
-                  alt={selectedProperty.title}
-                  className="w-full h-72 object-cover rounded-t-3xl"
-                />
-              ) : (
-                <div className="w-full h-72 bg-stone-100 flex items-center justify-center rounded-t-3xl">
-                  <Building2
-                    size={60}
-                    className="text-stone-300"
+      <Modal
+              isOpen={isViewModalOpen}
+              onClose={handleCloseModal}
+              title="Property Details"
+            >
+              {selectedProperty && (
+                <div className="space-y-5">
+                  {/* Image */}
+      
+                  <img
+                    src={selectedProperty.images?.[0]}
+                    alt={selectedProperty.title}
+                    className="h-56 w-full rounded-xl object-cover"
                   />
-                </div>
-              )}
-
-          
-
-              <button
-                onClick={() =>
-                  setSelectedProperty(null)
-                }
-                className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-stone-100 transition"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-         
-
-            <div className="p-6 md:p-8">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <h2 className="text-3xl font-bold text-stone-900">
-                    {selectedProperty.title}
-                  </h2>
-
-                  <div className="flex items-center gap-2 text-stone-500 mt-2">
+      
+                  {/* Title + Price */}
+      
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h2 className="text-xl font-semibold text-stone-900">
+                        {selectedProperty.title}
+                      </h2>
+      
+                      <p className="mt-1 text-sm text-stone-500">
+                        {selectedProperty.propertyType}
+                      </p>
+                    </div>
+      
+                    <p className="font-semibold text-stone-900">
+                      ₹{Number(selectedProperty.price).toLocaleString("en-IN")}
+                    </p>
+                  </div>
+      
+                  {/* Location */}
+      
+                  <div className="flex items-center gap-2 text-sm text-stone-600">
                     <MapPin size={17} />
-
+      
                     <span>
                       {selectedProperty.city}
-
-                      {selectedProperty.state &&
-                        `, ${selectedProperty.state}`}
+                      {selectedProperty.state && `, ${selectedProperty.state}`}
                     </span>
                   </div>
-                </div>
-
-                
-
-                <span
-                  className={`w-fit px-3 py-1.5 rounded-full text-sm font-medium capitalize
-                  ${
-                    selectedProperty.status?.toLowerCase() ===
-                    "approved"
-                      ? "bg-green-100 text-green-700"
-                      : selectedProperty.status?.toLowerCase() ===
-                          "rejected"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-amber-100 text-amber-700"
-                  }`}
-                >
-                  {selectedProperty.status ||
-                    "Pending"}
-                </span>
-              </div>
-
-            
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                <div className="bg-stone-50 rounded-xl p-4">
-                  <p className="text-xs text-stone-500">
-                    Property Type
-                  </p>
-
-                  <p className="font-semibold mt-1 capitalize">
-                    {selectedProperty.propertyType ||
-                      "N/A"}
-                  </p>
-                </div>
-
-                <div className="bg-stone-50 rounded-xl p-4">
-                  <p className="text-xs text-stone-500">
-                    Purpose
-                  </p>
-
-                  <p className="font-semibold mt-1 capitalize">
-                    {selectedProperty.purpose ||
-                      "N/A"}
-                  </p>
-                </div>
-
-                <div className="bg-stone-50 rounded-xl p-4">
-                  <p className="text-xs text-stone-500">
-                    Furnished
-                  </p>
-
-                  <p className="font-semibold mt-1 capitalize">
-                    {selectedProperty.furnished ||
-                      "N/A"}
-                  </p>
-                </div>
-
-                <div className="bg-stone-50 rounded-xl p-4">
-                  <p className="text-xs text-stone-500">
-                    Price
-                  </p>
-
-                  <p className="font-semibold mt-1">
-                    ₹
-                    {Number(
-                      selectedProperty.price || 0
-                    ).toLocaleString("en-IN")}
-                  </p>
-                </div>
-              </div>
-
-             
-
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold text-stone-900">
-                  Owner Information
-                </h3>
-
-                <div className="bg-stone-50 rounded-xl p-4 mt-3">
-                  <p className="font-medium">
-                    {selectedProperty.owner?.name ||
-                      "Unknown Owner"}
-                  </p>
-
-                  <p className="text-sm text-stone-500 mt-1">
-                    {selectedProperty.owner?.email}
-                  </p>
-
-                  {selectedProperty.owner?.phone && (
-                    <p className="text-sm text-stone-500 mt-1">
-                      {
-                        selectedProperty.owner
-                          .phone
-                      }
+      
+                  {/* Description */}
+      
+                  <div>
+                    <h3 className="mb-1 text-sm font-semibold text-stone-800">
+                      Description
+                    </h3>
+      
+                    <p className="text-sm leading-6 text-stone-600">
+                      {selectedProperty.description ||
+                        selectedProperty.desciption ||
+                        "No description available."}
                     </p>
-                  )}
-                </div>
-              </div>
-
-           
-
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold text-stone-900">
-                  Description
-                </h3>
-
-                <p className="text-stone-600 leading-7 mt-3">
-                  {selectedProperty.description ||
-                    selectedProperty.desciption ||
-                    "No description available."}
-                </p>
-              </div>
-
-
-              {selectedProperty.images?.length >
-                1 && (
-                <div className="mt-8">
-                  <h3 className="text-lg font-semibold text-stone-900 mb-4">
-                    Property Images
-                  </h3>
-
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {selectedProperty.images.map(
-                      (image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt={`${selectedProperty.title} ${index + 1}`}
-                          className="w-full h-36 object-cover rounded-xl"
-                        />
-                      )
-                    )}
                   </div>
+      
+                  {/* Owner */}
+      
+                  {selectedProperty.owner && (
+                    <div className="rounded-xl bg-stone-50 p-4">
+                      <p className="text-xs uppercase tracking-wider text-stone-400">
+                        Property Owner
+                      </p>
+      
+                      <p className="mt-1 font-medium text-stone-800">
+                        {selectedProperty.owner?.name || "Owner"}
+                      </p>
+      
+                      {selectedProperty.owner?.email && (
+                        <p className="mt-1 text-sm text-stone-500">
+                          {selectedProperty.owner.email}
+                        </p>
+                      )}
+                    </div>
+                  )}
+      
+                  {/* Book From Modal */}
+      
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleBooking(selectedProperty._id);
+                      handleCloseModal();
+                    }}
+                    className="w-full rounded-xl bg-stone-900 py-3 text-sm font-medium text-white transition hover:bg-black"
+                  >
+                    Book a Visit
+                  </button>
                 </div>
               )}
-
-            
-
-              <button
-                onClick={() =>
-                  setSelectedProperty(null)
-                }
-                className="w-full mt-8 bg-stone-900 text-white py-3 rounded-xl hover:bg-black transition"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+            </Modal>
     </div>
   );
 }

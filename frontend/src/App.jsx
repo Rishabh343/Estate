@@ -7,19 +7,19 @@ import DashboardAdmin from "./components/pages/Admin/DashboardAdmin";
 import UsersAdmin from "./components/pages/Admin/UsersAdmin";
 import PropertyApprovalAdmin from "./components/pages/Admin/PropertyApprovalAdmin";
 import PropertiesAdmin from "./components/pages/Admin/PropertiesAdmin";
-import MyProfileAdmin from "./components/pages/Admin/MyProfileAdmin";
 
 import DashboardOwner from "./components/pages/Owner/DashboardOwner";
 import BookingsOwner from "./components/pages/Owner/BookingsOwner";
 import MyPropertiesOwner from "./components/pages/Owner/MyPropertiesOwner";
-import MyProfileOwner from "./components/pages/Owner/MyProfileOwner";
 
 import Favorites from "./components/pages/Buyer/Favorites";
 import MyBookings from "./components/pages/Buyer/MyBookings";
-import MyProfile from "./components/pages/Buyer/MyProfile";
+
 import Properties from "./components/pages/Buyer/Properties";
 import ProtectedRoute from "./components/common/ProtectedRoutes";
 import MainLayout from "./components/layout/MainLayout";
+
+import MyProfile from "./components/pages/MyProfile";
 
 export default function App() {
   return (
@@ -47,7 +47,7 @@ export default function App() {
             path="/admin/profile"
             element={
               <ProtectedRoute allowedRole="admin">
-                <MyProfileAdmin />
+                <MyProfile />
               </ProtectedRoute>
             }
           />
@@ -110,7 +110,7 @@ export default function App() {
             path="/owner/profile"
             element={
               <ProtectedRoute allowedRole="owner">
-                <MyProfileOwner />
+                <MyProfile />
               </ProtectedRoute>
             }
           />
