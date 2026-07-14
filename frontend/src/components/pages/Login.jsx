@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import Loader from "../common/Loader";
+import { useEffect } from "react";
 export default function Login() {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -21,8 +22,11 @@ export default function Login() {
     e.preventDefault();
     try {
       setLoading(true);
+      setError("");
+
       const response = await axios.post(
-        "https://estate-backend-1xrm.onrender.com/api/user/login",
+        // "https://estate-backend-1xrm.onrender.com/api/user/login",
+        "http://localhost:8000/api/user/login",
         formData,
         {
           withCredentials: true,
@@ -48,10 +52,20 @@ export default function Login() {
       });
     } catch (error) {
       console.log(error);
+      setError(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (!error) return;
+
+    const timer = setTimeout(() => {
+      setError("");
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [error]);
   if (loading) {
     return <Loader />;
   }
@@ -298,6 +312,41 @@ export default function Login() {
           </div>
         </div>
       </div>
+      {error && (
+        <div className="fixed bottom-6 left-1/2 z-[100] w-[90%] max-w-sm -translate-x-1/2">
+          <div className="flex items-start gap-3 rounded-xl border border-red-100 bg-white p-4 shadow-xl">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-50">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="h-5 w-5 text-red-500"
+              >
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 8v4" />
+                <path d="M12 16h.01" />
+              </svg>
+            </div>
+
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-stone-900">
+                Login failed
+              </h3>
+
+              <p className="mt-1 text-sm text-stone-500">{error}</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setError("")}
+              className="text-xl leading-none text-stone-400 transition hover:text-stone-900"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

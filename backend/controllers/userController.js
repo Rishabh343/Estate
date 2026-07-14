@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
+import uploadToCloudinary from "../utils/uploadToCloudinary.js";
 dotenv.config();
 export const Register = async (req, res) => {
   try {
@@ -107,7 +108,7 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({
+      return res.status(401).json({
         status: false,
         message: "Email and password are required",
       });
@@ -115,15 +116,14 @@ export const login = async (req, res) => {
 
     const user = await userModel.findOne({ email });
     if (!user) {
-      res.status(400).json({
+      return res.status(401).json({
         status: false,
         message: "Email not found",
-        error: error.message,
       });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.status(400).json({
+      return res.status(400).json({
         status: false,
         message: "check Email or Password",
       });
@@ -142,7 +142,7 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     console.log("Generated Token:", token);
-    res.status(200).json({
+    return res.status(200).json({
       status: true,
       message: "Login Success",
       token,
@@ -150,7 +150,7 @@ export const login = async (req, res) => {
       user,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       status: false,
       message: "Login failed",
       error: error.message,
@@ -199,7 +199,11 @@ export const updateProfile = async (req, res) => {
     };
 
     if (req.file) {
-      updatedData.profileImage = `https://estate-backend-1xrm.onrender.com/uploads/${req.file.filename}`;
+      const uploadResult = await uploadToCloudinary(
+        req.file.buffer,
+        "estate/profiles",
+      );
+      updatedData.profileImage = uploadResult.secure_url;
     }
 
     const updatedUser = await userModel

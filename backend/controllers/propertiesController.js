@@ -1,4 +1,5 @@
 import propertiesModel from "../models/propertiesModel.js";
+import uploadToCloudinary from "../utils/uploadToCloudinary.js";
 
 // Create Property
 export const addProperties = async (req, res) => {
@@ -13,12 +14,14 @@ export const addProperties = async (req, res) => {
       city,
       state,
     } = req.body;
-    const imageUrls = req.files
-      ? req.files.map(
-          (file) =>
-            `https://estate-backend-1xrm.onrender.com/uploads/${file.filename}`,
-        )
-      : [];
+    let imageUrls = [];
+    if (req.files && req.files.length > 0) {
+      const uploadResults = await Promise.all(
+        req.files.map((file) => uploadToCloudinary(file.buffer, "estate/properties")),
+      );
+
+      imageUrls = uploadResults.map((result) => result.secure_url);
+    }
     const response = await propertiesModel.create({
       owner: req.user.id,
       title,
@@ -125,12 +128,25 @@ export const updateProperty = async (req, res) => {
       city,
       state,
     } = req.body;
-    const imageUrls = req.files
-      ? req.files.map(
-          (file) =>
-            `https://estate-backend-1xrm.onrender.com/uploads/${file.filename}`,
-        )
-      : [];
+    const property = await propertiesModel.findOne({
+      _id: req.params.id,
+      owner: req.user.id,
+    });
+
+    if (!property) {
+      return res.status(404).json({
+        status: false,
+        message: "Property not found or you're not the owner",
+      });
+    }
+    let imageUrls = property.images;
+    if (req.files && req.files.length > 0) {
+      const uploadResults = await Promise.all(
+        req.files.map((file) => uploadToCloudinary(file.buffer, "estate/properties")),
+      );
+
+      imageUrls = uploadResults.map((result) => result.secure_url);
+    }
     const response = await propertiesModel.findOneAndUpdate(
       {
         _id: req.params.id,
@@ -152,14 +168,6 @@ export const updateProperty = async (req, res) => {
         runValidators: true,
       },
     );
-
-    if (!response) {
-      return res.status(404).json({
-        status: false,
-        message: "Property not found or you're not the owner",
-      });
-    }
-
     res.status(200).json({
       status: true,
       message: "Property updated successfully",
