@@ -3,6 +3,7 @@ import userModel from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import uploadToCloudinary from "../utils/uploadToCloudinary.js";
+import propertiesModel from "../models/propertiesModel.js";
 dotenv.config();
 export const Register = async (req, res) => {
   try {
