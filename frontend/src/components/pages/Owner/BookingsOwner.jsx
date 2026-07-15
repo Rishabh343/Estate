@@ -65,7 +65,7 @@ export default function BookingsOwner() {
 
                 <th className="p-4 text-left font-medium">Property</th>
 
-                <th className="p-4 text-left font-medium">Visit Date</th>
+                {/* <th className="p-4 text-left font-medium">Visit Date</th> */}
 
                 <th className="p-4 text-left font-medium">Status</th>
 
@@ -117,7 +117,7 @@ export default function BookingsOwner() {
 
                   {/* Visit Date */}
 
-                  <td className="p-4 text-stone-600">
+                  {/* <td className="p-4 text-stone-600">
                     {booking.visitDate
                       ? new Date(booking.visitDate).toLocaleDateString(
                           "en-IN",
@@ -128,7 +128,7 @@ export default function BookingsOwner() {
                           },
                         )
                       : "Not available"}
-                  </td>
+                  </td> */}
 
                   {/* Status */}
 

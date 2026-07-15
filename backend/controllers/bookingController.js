@@ -121,7 +121,7 @@ export const OwnersDashboardReviewBooking = async (req, res) => {
   try {
     const bookings = await bookingModel
       .find({ owner: req.user.id })
-      .populate("buyer", "name email")
+      .populate("buyer", "name email phone ")
       .populate("property", "title");
 
     res.status(200).json({
