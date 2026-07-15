@@ -235,19 +235,74 @@ export const updateProfile = async (req, res) => {
 };
 export const deleteProfile = async (req, res) => {
   try {
-    const user = await userModel.findByIdAndDelete(req.params.id);
+    const userId = req.params.id;
+
+    // Find user
+    const user = await userModel.findById(userId);
+
     if (!user) {
       return res.status(404).json({
-        message: "user not found",
+        success: false,
+        message: "User not found",
       });
     }
-    res.status(200).json({
+
+    // If user is an owner
+    if (user.role === "owner") {
+      // Find owner's properties
+      const properties = await propertiesModel.find({
+        owner: userId,
+      });
+
+      const propertyIds = properties.map(
+        (property) => property._id,
+      );
+
+      // Delete bookings related to owner's properties
+      await bookingModel.deleteMany({
+        property: {
+          $in: propertyIds,
+        },
+      });
+
+      // Delete favorites related to owner's properties
+      await favoriteModel.deleteMany({
+        property: {
+          $in: propertyIds,
+        },
+      });
+
+      // Delete owner's properties
+      await propertiesModel.deleteMany({
+        owner: userId,
+      });
+    }
+
+    // If user is a buyer, delete their data
+    if (user.role === "buyer") {
+      await bookingModel.deleteMany({
+        buyer: userId,
+      });
+
+      await favoriteModel.deleteMany({
+        buyer: userId,
+      });
+    }
+
+    // Finally delete user
+    await userModel.findByIdAndDelete(userId);
+
+    return res.status(200).json({
       success: true,
-      message: "user deleted Successfully",
-      data: user,
+      message:
+        "User and associated data deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete user",
+      error: error.message,
+    });
   }
 };
 export const searchUser = async (req, res) => {

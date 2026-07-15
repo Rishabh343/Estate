@@ -17,7 +17,9 @@ export const addProperties = async (req, res) => {
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
       const uploadResults = await Promise.all(
-        req.files.map((file) => uploadToCloudinary(file.buffer, "estate/properties")),
+        req.files.map((file) =>
+          uploadToCloudinary(file.buffer, "estate/properties"),
+        ),
       );
 
       imageUrls = uploadResults.map((result) => result.secure_url);
@@ -163,7 +165,9 @@ export const updateProperty = async (req, res) => {
     let imageUrls = property.images;
     if (req.files && req.files.length > 0) {
       const uploadResults = await Promise.all(
-        req.files.map((file) => uploadToCloudinary(file.buffer, "estate/properties")),
+        req.files.map((file) =>
+          uploadToCloudinary(file.buffer, "estate/properties"),
+        ),
       );
 
       imageUrls = uploadResults.map((result) => result.secure_url);
@@ -206,31 +210,40 @@ export const updateProperty = async (req, res) => {
 // Delete Property
 export const deleteProperty = async (req, res) => {
   try {
-    // console.log("Property ID:", req.params.id);
-    // console.log("Logged-in Owner:", req.user.id);
-
     const property = await propertiesModel.findById(req.params.id);
-
-    console.log(property);
 
     if (!property) {
       return res.status(404).json({
+        status: false,
         message: "Property not found",
       });
     }
 
-    // console.log("Property Owner:", property.owner.toString());
+    // Owner can delete only their own property
+    // Admin can delete any property
+    if (
+      req.user.role !== "admin" &&
+      property.owner.toString() !== req.user.id
+    ) {
+      return res.status(403).json({
+        status: false,
+        message: "You are not authorized to delete this property",
+      });
+    }
 
-    const response = await propertiesModel.findOneAndDelete({
-      _id: req.params.id,
-      owner: req.user.id,
+    await propertiesModel.findByIdAndDelete(req.params.id);
+
+    return res.status(200).json({
+      status: true,
+      message: "Property deleted successfully",
+      data: property,
     });
-
-    console.log(response);
-
-    res.json(response);
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      status: false,
+      message: "Failed to delete property",
+      error: error.message,
+    });
   }
 };
 export const searchProperties = async (req, res) => {
