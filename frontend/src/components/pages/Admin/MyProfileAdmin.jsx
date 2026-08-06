@@ -1,8 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import {
   User,
@@ -18,15 +14,8 @@ import { UserContext } from "../../context/userContext";
 import Loader from "../../common/Loader";
 import Modal from "../../common/Modal";
 
-
-
 export default function MyProfileAdmin() {
-  const {
-    user,
-    loading,
-    getUserProfile,
-    updateUser,
-  } = useContext(UserContext);
+  const { user, loading, getUserProfile, updateUser } = useContext(UserContext);
 
   // Modal State
 
@@ -43,13 +32,11 @@ export default function MyProfileAdmin() {
 
   // Image State
 
-  const [profileImage, setProfileImage] =
-    useState(null);
+  const [profileImage, setProfileImage] = useState(null);
 
   const [preview, setPreview] = useState("");
 
-  const [updating, setUpdating] =
-    useState(false);
+  const [updating, setUpdating] = useState(false);
 
   // =========================
   // Get Profile
@@ -73,9 +60,7 @@ export default function MyProfileAdmin() {
 
     setProfileImage(null);
 
-    setPreview(
-      user?.profileImage || ""
-    );
+    setPreview(user?.profileImage || "");
 
     setIsOpen(true);
   };
@@ -113,9 +98,7 @@ export default function MyProfileAdmin() {
 
     setProfileImage(file);
 
-    setPreview(
-      URL.createObjectURL(file)
-    );
+    setPreview(URL.createObjectURL(file));
   };
 
   // =========================
@@ -130,47 +113,27 @@ export default function MyProfileAdmin() {
 
       const data = new FormData();
 
-      data.append(
-        "name",
-        formData.name
-      );
+      data.append("name", formData.name);
 
-      data.append(
-        "email",
-        formData.email
-      );
+      data.append("email", formData.email);
 
-      data.append(
-        "phone",
-        formData.phone
-      );
+      data.append("phone", formData.phone);
 
-      data.append(
-        "address",
-        formData.address
-      );
+      data.append("address", formData.address);
 
       if (profileImage) {
-        data.append(
-          "profileImage",
-          profileImage
-        );
+        data.append("profileImage", profileImage);
       }
 
       await updateUser(data);
 
       closeModalHandler();
 
-      alert(
-        "Profile updated successfully"
-      );
+      alert("Profile updated successfully");
     } catch (error) {
       console.log(error);
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to update profile"
-      );
+      alert(error.response?.data?.message || "Failed to update profile");
     } finally {
       setUpdating(false);
     }
@@ -187,9 +150,7 @@ export default function MyProfileAdmin() {
   if (!user) {
     return (
       <div className="min-h-screen bg-stone-100 flex items-center justify-center">
-        <p className="text-stone-500">
-          Profile not found.
-        </p>
+        <p className="text-stone-500">Profile not found.</p>
       </div>
     );
   }
@@ -199,9 +160,7 @@ export default function MyProfileAdmin() {
   // =========================
 
   const joinedDate = user.createdAt
-    ? new Date(
-        user.createdAt
-      ).toLocaleDateString("en-IN", {
+    ? new Date(user.createdAt).toLocaleDateString("en-IN", {
         day: "2-digit",
         month: "long",
         year: "numeric",
@@ -217,9 +176,7 @@ export default function MyProfileAdmin() {
           My Profile
         </h1>
 
-        <p className="text-stone-500 mt-2">
-          Manage your personal information.
-        </p>
+        <p className="text-stone-500 mt-2">Manage your personal information.</p>
       </div>
 
       {/* Profile Card */}
@@ -244,10 +201,7 @@ export default function MyProfileAdmin() {
                 />
               ) : (
                 <div className="w-32 h-32 rounded-full border-4 border-white bg-stone-900 text-white flex items-center justify-center text-4xl font-bold shadow-md">
-                  {user.name
-                    ?.charAt(0)
-                    .toUpperCase() ||
-                    "A"}
+                  {user.name?.charAt(0).toUpperCase() || "A"}
                 </div>
               )}
 
@@ -259,13 +213,9 @@ export default function MyProfileAdmin() {
                 </h2>
 
                 <div className="flex items-center gap-2 mt-2 text-stone-500">
-                  <ShieldCheck
-                    size={18}
-                  />
+                  <ShieldCheck size={18} />
 
-                  <span className="capitalize">
-                    {user.role}
-                  </span>
+                  <span className="capitalize">{user.role}</span>
                 </div>
               </div>
             </div>
@@ -273,13 +223,10 @@ export default function MyProfileAdmin() {
             {/* Edit Button */}
 
             <button
-              onClick={
-                openModalHandler
-              }
+              onClick={openModalHandler}
               className="flex items-center justify-center gap-2 bg-stone-900 text-white px-6 py-3 rounded-xl hover:bg-black transition"
             >
               <Edit size={18} />
-
               Edit Profile
             </button>
           </div>
@@ -288,64 +235,39 @@ export default function MyProfileAdmin() {
 
           <div className="grid md:grid-cols-2 gap-6 mt-10">
             <ProfileItem
-              icon={
-                <User size={22} />
-              }
+              icon={<User size={22} />}
               label="Full Name"
               value={user.name}
             />
 
             <ProfileItem
-              icon={
-                <Mail size={22} />
-              }
+              icon={<Mail size={22} />}
               label="Email"
               value={user.email}
             />
 
             <ProfileItem
-              icon={
-                <Phone size={22} />
-              }
+              icon={<Phone size={22} />}
               label="Phone"
-              value={
-                user.phone ||
-                "Not available"
-              }
+              value={user.phone || "Not available"}
             />
 
             <ProfileItem
-              icon={
-                <ShieldCheck
-                  size={22}
-                />
-              }
+              icon={<ShieldCheck size={22} />}
               label="Role"
-              value={
-                user.role ||
-                "Admin"
-              }
+              value={user.role || "Admin"}
             />
 
             <ProfileItem
-              icon={
-                <Calendar
-                  size={22}
-                />
-              }
+              icon={<Calendar size={22} />}
               label="Joined On"
               value={joinedDate}
             />
 
             <ProfileItem
-              icon={
-                <MapPin size={22} />
-              }
+              icon={<MapPin size={22} />}
               label="Address"
-              value={
-                user.address ||
-                "Not available"
-              }
+              value={user.address || "Not available"}
             />
           </div>
         </div>
@@ -355,15 +277,8 @@ export default function MyProfileAdmin() {
           Reusable Modal
       ========================= */}
 
-      <Modal
-        isOpen={isOpen}
-        onClose={closeModalHandler}
-        title="Edit Profile"
-      >
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5"
-        >
+      <Modal isOpen={isOpen} onClose={closeModalHandler} title="Edit Profile">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Profile Image */}
 
           <div className="flex justify-center">
@@ -376,10 +291,7 @@ export default function MyProfileAdmin() {
                 />
               ) : (
                 <div className="w-28 h-28 rounded-full bg-stone-900 text-white flex items-center justify-center text-4xl font-bold">
-                  {formData.name
-                    ?.charAt(0)
-                    .toUpperCase() ||
-                    "A"}
+                  {formData.name?.charAt(0).toUpperCase() || "A"}
                 </div>
               )}
 
@@ -396,9 +308,7 @@ export default function MyProfileAdmin() {
                 id="profileImage"
                 type="file"
                 accept="image/*"
-                onChange={
-                  handleImageChange
-                }
+                onChange={handleImageChange}
                 className="hidden"
               />
             </div>
@@ -415,9 +325,7 @@ export default function MyProfileAdmin() {
               type="text"
               name="name"
               value={formData.name}
-              onChange={
-                handleChange
-              }
+              onChange={handleChange}
               required
               className="w-full border border-stone-300 rounded-xl px-4 py-3 outline-none focus:border-stone-700"
             />
@@ -434,9 +342,7 @@ export default function MyProfileAdmin() {
               type="email"
               name="email"
               value={formData.email}
-              onChange={
-                handleChange
-              }
+              onChange={handleChange}
               required
               className="w-full border border-stone-300 rounded-xl px-4 py-3 outline-none focus:border-stone-700"
             />
@@ -453,9 +359,7 @@ export default function MyProfileAdmin() {
               type="text"
               name="phone"
               value={formData.phone}
-              onChange={
-                handleChange
-              }
+              onChange={handleChange}
               className="w-full border border-stone-300 rounded-xl px-4 py-3 outline-none focus:border-stone-700"
             />
           </div>
@@ -469,12 +373,8 @@ export default function MyProfileAdmin() {
 
             <textarea
               name="address"
-              value={
-                formData.address
-              }
-              onChange={
-                handleChange
-              }
+              value={formData.address}
+              onChange={handleChange}
               rows="3"
               className="w-full border border-stone-300 rounded-xl px-4 py-3 outline-none focus:border-stone-700 resize-none"
             />
@@ -485,9 +385,7 @@ export default function MyProfileAdmin() {
           <div className="flex gap-3 pt-2">
             <button
               type="button"
-              onClick={
-                closeModalHandler
-              }
+              onClick={closeModalHandler}
               className="flex-1 border border-stone-300 text-stone-700 py-3 rounded-xl hover:bg-stone-100 transition"
             >
               Cancel
@@ -498,9 +396,7 @@ export default function MyProfileAdmin() {
               disabled={updating}
               className="flex-1 bg-stone-900 text-white py-3 rounded-xl hover:bg-black transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {updating
-                ? "Updating..."
-                : "Save Changes"}
+              {updating ? "Updating..." : "Save Changes"}
             </button>
           </div>
         </form>
@@ -513,25 +409,15 @@ export default function MyProfileAdmin() {
 // Reusable Profile Item
 // =========================
 
-function ProfileItem({
-  icon,
-  label,
-  value,
-}) {
+function ProfileItem({ icon, label, value }) {
   return (
     <div className="flex items-center gap-4 bg-stone-50 rounded-xl p-5">
-      <div className="text-stone-700">
-        {icon}
-      </div>
+      <div className="text-stone-700">{icon}</div>
 
       <div>
-        <p className="text-sm text-stone-500">
-          {label}
-        </p>
+        <p className="text-sm text-stone-500">{label}</p>
 
-        <h3 className="font-semibold text-stone-900 capitalize">
-          {value}
-        </h3>
+        <h3 className="font-semibold text-stone-900 capitalize">{value}</h3>
       </div>
     </div>
   );

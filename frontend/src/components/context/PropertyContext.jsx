@@ -23,27 +23,25 @@ export default function PropertyProvider({ children }) {
     }
   };
   const getMyProperties = async () => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const response = await api.get(
-      "/properties/myproperties",
-    );
+      const response = await api.get("/properties/myproperties");
 
-    setProperties(response.data.data);
+      setProperties(response.data.data);
 
-    return response.data;
-  } catch (error) {
-    console.log(
-      "Get My Properties Error:",
-      error.response?.data || error.message,
-    );
+      return response.data;
+    } catch (error) {
+      console.log(
+        "Get My Properties Error:",
+        error.response?.data || error.message,
+      );
 
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
   const getAllAppovedProperties = async () => {
     try {
       setLoading(true);
